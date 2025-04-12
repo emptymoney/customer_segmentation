@@ -1,7 +1,6 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
-import squarify
 import plotly.express as px
 
 # -----------------------------------------------------------------------------------
