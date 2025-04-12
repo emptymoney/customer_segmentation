@@ -84,7 +84,7 @@ elif selected=="Các thuật toán thử nghiệm":
         st.markdown(fn.format_table(rfm_agg2).to_html(), unsafe_allow_html=True)  
         fn.ve_cac_bieu_do(rfm_agg2,df_now,st,'KMeans')
 elif selected=="Lựa chọn kết quả":
-    st.markdown("<h2 style='text-align: center;'>Chọn thuật toán KMeans để làm thử nghiệm phân nhóm khác hàng</h2>", unsafe_allow_html=True) 
+    st.markdown("<h2 style='text-align: center;'>Chọn thuật toán KMeans để làm thử nghiệm phân nhóm khách hàng</h2>", unsafe_allow_html=True) 
     st.subheader('Sử dụng k=5 -> Chia thành 5 nhóm')   
     
     tab1, tab2 = st.tabs(["Biểu đồ", "Top 3 sản phẩm/nhóm sản phẩm"])
