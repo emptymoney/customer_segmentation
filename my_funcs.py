@@ -105,22 +105,116 @@ def select_one_customers_by_RFM(df,model,st):
     df_new=gan_nhan_cum_cho_khach_hang(df_new,model,isPredict=True)
 
     st.markdown(format_table(df_new).to_html(), unsafe_allow_html=True)
+    giai_thich_ClusterName(st,df_new['ClusterName'].iloc[0])
 
 
 # -----------------------------------------------------------------------------------
-def select_one_customers_by_id(customer_id_list,df,st):
+def select_one_customers_by_id(customer_id_list,df,isRandomCus,st):
     options = ['']+customer_id_list['Member_number'].tolist()
     occupation = st.selectbox('Chọn khách hàng theo id (Member_number):',options,
         format_func=lambda x: 'Chọn một khách hàng' if x == '' else x,
     )
+
+    selected_cus=pd.DataFrame()
     if occupation!='':
         st.write("Khách hàng được chọn:", occupation)
         selected_cus=df[df['Member_number']==occupation]
-        selected_cus=selected_cus.groupby(['ClusterName','Recency','Frequency','Monetary']).agg({'TotalPrice':'sum'})
+        if not isRandomCus:
+            selected_cus=selected_cus.groupby(['ClusterName','Recency','Frequency','Monetary']).agg({'TotalPrice':'sum'})
         selected_cus.reset_index(inplace=True)
         st.markdown(format_table(selected_cus).to_html(), unsafe_allow_html=True)    
+        giai_thich_ClusterName(st,selected_cus['ClusterName'].iloc[0])
 
 
+# -----------------------------------------------------------------------------------
+def giai_thich_ClusterName(st,cluster_name=None):
+    if cluster_name=='Champions':
+        st.write(
+        ''' 
+        **Champions: Khách hàng VIP**
+        - Mô tả:
+            - Recency thấp, Frequency và Monetary cao, quy mô lớn (Count cao). 
+            - Đây là nhóm khách hàng có giá trị nhất, mang lại nhiều doanh thu cho doanh nghiệp.
+        - Đề xuất:            
+            - Ưu tiên hàng đầu: Cung cấp dịch vụ khách hàng đặc biệt, ưu tiên xử lý đơn hàng, hỗ trợ 24/7.
+            - Chương trình VIP độc quyền: Tạo ra các chương trình ưu đãi, quà tặng đặc biệt chỉ dành cho nhóm VIP.
+            - Tăng cường tương tác: Tổ chức sự kiện, chương trình tri ân dành riêng cho khách hàng VIP.            
+        ''')
+    elif cluster_name=='Lost Customers':
+        st.write(
+        ''' 
+        **Lost Customers: Khách hàng đã mất**
+        - Mô tả:
+            - Recency cao, Frequency và Monetary thấp, quy mô lớn (Count cao). 
+            - Nhóm này mua hàng không thường xuyên và chi tiêu ít.
+        - Đề xuất:            
+            - Khảo sát: Thực hiện khảo sát để hiểu lý do họ ngừng mua hàng.
+            - Khuyến mãi đặc biệt: Gửi email/tin nhắn với ưu đãi đặc biệt, chương trình tri ân.
+            - Cá nhân hóa: Cá nhân hóa nội dung tiếp thị dựa trên lịch sử mua hàng trước đó.            
+        ''')
+    elif cluster_name=='New Customers':
+        st.write(            
+        ''' 
+        **New Customers: Khách hàng mới**
+        - Mô tả:
+            - Recency, Frequency và Monetary ở mức trung bình, quy mô lớn (Count cao). 
+            - Đây có thể là nhóm khách hàng mới, đang tìm hiểu và thử nghiệm sản phẩm/dịch vụ. Hoặc khách hàng tiềm năng chưa quyết định gắn bó lâu dài.
+        - Đề xuất:            
+            - Hướng dẫn & hỗ trợ: Cung cấp hướng dẫn sử dụng sản phẩm/dịch vụ, hỗ trợ tận tình để tạo trải nghiệm tích cực.
+            - Khuyến mãi mua hàng lần sau: Gửi mã giảm giá cho lần mua tiếp theo.
+            - Xây dựng lòng trung thành: Thực hiện các chương trình khuyến khích mua hàng thường xuyên.
+        ''')     
+    elif cluster_name=='Loyal Customers':
+        st.write(            
+        ''' 
+        **Loyal Customers: Khách hàng trung thành**
+        - Mô tả:
+            - Recency thấp, Frequency cao nhưng Monetary thấp, quy mô nhỏ (Count thấp). 
+            - Đây là nhóm khách hàng trung thành nhưng chi tiêu ít
+        - Đề xuất:            
+            - Chăm sóc: Duy trì mối quan hệ tốt, gửi lời cảm ơn, quà tặng vào các dịp đặc biệt.
+            - Chương trình khách hàng thân thiết: Xây dựng chương trình tích điểm, ưu đãi dành riêng cho nhóm này.
+            - Tăng giá trị đơn hàng: Khuyến khích mua thêm sản phẩm/dịch vụ bằng cách giới thiệu sản phẩm bổ sung hoặc bán chéo.            
+        ''')
+    elif cluster_name=='Potential Customers':
+        st.write(            
+        ''' 
+        **Potential Customers: Khách hàng tiềm năng**
+        - Mô tả:
+            - Recency cao, Frequency thấp nhưng Monetary cao, quy mô nhỏ (Count thấp). 
+            - Đây là nhóm khách hàng đã từng chi tiêu nhiều nhưng đã lâu không mua hàng. 
+            - Họ có tiềm năng trở thành khách hàng trung thành nếu được chăm sóc đúng cách.  
+        - Đề xuất:
+            - Gửi email marketing giới thiệu sản phẩm mới, chương trình khuyến mãi hấp dẫn.
+            - Thu hút: Chạy các chiến dịch quảng cáo, khuyến mãi hấp dẫn để thu hút sự chú ý và khuyến khích mua hàng lần đầu.
+            - Giới thiệu sản phẩm: Gửi email giới thiệu sản phẩm/dịch vụ mới, phù hợp với sở thích của họ (dựa trên dữ liệu đã có).
+            - Tăng nhận diện: Tăng cường nhận diện thương hiệu thông qua các kênh tiếp thị khác nhau.            
+        ''')    
+    else:
+        st.write(
+        ''' 
+        **Champions: Khách hàng VIP**
+        - Recency thấp, Frequency và Monetary cao, quy mô lớn (Count cao). 
+        - Đây là nhóm khách hàng có giá trị nhất, mang lại nhiều doanh thu cho doanh nghiệp.
+        
+        **Lost Customers: Khách hàng đã mất**
+        - Recency cao, Frequency và Monetary thấp, quy mô lớn (Count cao). 
+        - Nhóm này mua hàng không thường xuyên và chi tiêu ít.
+        
+        **New Customers: Khách hàng mới**
+        - Recency, Frequency và Monetary ở mức trung bình, quy mô lớn (Count cao). 
+        - Đây có thể là nhóm khách hàng mới, đang tìm hiểu và thử nghiệm sản phẩm/dịch vụ. Hoặc khách hàng tiềm năng chưa quyết định gắn bó lâu dài.    
+        
+        **Loyal Customers: Khách hàng trung thành**
+        - Recency thấp, Frequency cao nhưng Monetary thấp, quy mô nhỏ (Count thấp). 
+        - Đây là nhóm khách hàng trung thành nhưng chi tiêu ít  
+        
+        **Potential Customers: Khách hàng tiềm năng**
+        - Recency cao, Frequency thấp nhưng Monetary cao, quy mô nhỏ (Count thấp). 
+        - Đây là nhóm khách hàng đã từng chi tiêu nhiều nhưng đã lâu không mua hàng. 
+        - Họ có tiềm năng trở thành khách hàng trung thành nếu được chăm sóc đúng cách.                          
+        ''')
+    
 # -----------------------------------------------------------------------------------
 # def truc_quan_hoa_treemap2(rfm_agg,modelName):
 #     fig = plt.gcf()
