@@ -88,8 +88,8 @@ def select_one_customers_by_RFM(df,model,st):
     recency_max=int(df['Recency'].max()*2)
     frequency_min=df['Frequency'].min()
     frequency_max=int(df['Frequency'].max()*2)
-    monetary_min=int(df['Monetary'].min())
-    monetary_max=int(df['Monetary'].max()*2)
+    monetary_min=float(df['Monetary'].min())
+    monetary_max=float(df['Monetary'].max()*2)
 
     R = st.slider("Recency", 0, recency_max, int((recency_max-recency_min)/6))
     st.write("Recency: ", R)
@@ -97,8 +97,11 @@ def select_one_customers_by_RFM(df,model,st):
     F = st.slider("Frequency", 0, frequency_max, int((frequency_max-frequency_min)/6))
     st.write("Frequency: ", F)
 
-    M = st.slider("Monetary", 0, monetary_max, int((monetary_max-monetary_min)/6))
-    st.write("Monetary: ", M)
+    M_ = st.slider("Monetary", 0.0, monetary_max, (monetary_max-monetary_min)/6, 0.1)
+    # Tạo number_input để điều chỉnh giá trị chi tiết hơn
+    M = st.number_input("Nhập giá trị chính xác:", min_value=0.0, max_value=monetary_max, value=M_, step=0.1, format="%.1f")  # Điều chỉnh step và format theo nhu cầu
+    M=round(M,1)
+    st.write("Monetary:", M)
 
     cols=['Recency','Frequency','Monetary']
     df_new=pd.DataFrame([[R,F,M]],columns=cols)

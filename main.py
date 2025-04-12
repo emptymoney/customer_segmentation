@@ -111,12 +111,12 @@ elif selected=="Lựa chọn kết quả":
         fn.giai_thich_ClusterName(st)
 elif selected=="Ứng dụng phân cụm":
     st.write('### Dự đoán phân nhóm khách hàng')      
-    status = st.radio("**Chọn cách nhập thông tin khách hàng:**", ("Nhập id khách hàng:", "Nhập RFM của khách hàng:","Upload file:"))
+    status = st.radio("**Chọn cách nhập thông tin khách hàng:**", ("Nhập id khách hàng là thành viên của cửa hàng:", "Nhập RFM của khách hàng:","Upload file:"))
     st.write(f'**{status}**')
-    if status=="Nhập id khách hàng:":
+    if status=="Nhập id khách hàng là thành viên của cửa hàng:":
         selected_cus=fn.select_one_customers_by_id(customers,df_merged,False,st)
     elif status=='Nhập RFM của khách hàng:':
-        fn.select_one_customers_by_RFM(df_merged,model,st)     
+        fn.select_one_customers_by_RFM(df_merged,model,st)
     elif status=='Upload file:':
         st.subheader("File Uploader")
         file = st.file_uploader("Chọn file", type=["csv", "txt"])
@@ -126,6 +126,7 @@ elif selected=="Ứng dụng phân cụm":
             cus_random_temp = cus_random_temp.drop(columns=['Member_number'])
             cus_random_temp=fn.gan_nhan_cum_cho_khach_hang(cus_random_temp,model,True)
             cus_random=cus_random.merge(cus_random_temp,how='left')
+            st.subheader('Bảng phân cụm danh sách khách hàng:')
             st.markdown(fn.format_table(cus_random).to_html(), unsafe_allow_html=True)
         else:
             st.write("Vui lòng chọn file.")
