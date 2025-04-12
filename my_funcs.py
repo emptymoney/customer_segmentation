@@ -10,7 +10,7 @@ def gan_nhan_cum_cho_khach_hang(df,model,isPredict=False):
     else:
         df["Cluster"] = model.labels_
 
-    # Tạo dictionary ánh xạ giữa giá trị số và tên cụm
+    # Tạo dictionary ánh xạ giữa giá trị số và tên nhóm
     cluster_mapping = {
         0: 'Potential Customers',
         1: 'Lost Customers',
@@ -26,7 +26,7 @@ def gan_nhan_cum_cho_khach_hang(df,model,isPredict=False):
 
 # -----------------------------------------------------------------------------------
 def tinh_gia_tri_tb_RFM(df):
-    # Phân tích kết quả, xem các đặc điểm của từng cụm
+    # Phân tích kết quả, xem các đặc điểm của từng nhóm
     df.groupby('ClusterName').agg({
         'Recency':'mean',
         'Frequency':'mean',
@@ -107,6 +107,7 @@ def select_one_customers_by_RFM(df,model,st):
     df_new=pd.DataFrame([[R,F,M]],columns=cols)
     df_new=gan_nhan_cum_cho_khach_hang(df_new,model,isPredict=True)
 
+    st.subheader('Khách hàng đã được phân nhóm 🎉')
     st.markdown(format_table(df_new).to_html(), unsafe_allow_html=True)
     giai_thich_ClusterName(st,df_new['ClusterName'].iloc[0])
 
@@ -126,6 +127,7 @@ def select_one_customers_by_id(customer_id_list,df,isRandomCus,st):
             if not isRandomCus:
                 selected_cus=selected_cus.groupby(['ClusterName','Recency','Frequency','Monetary']).agg({'TotalPrice':'sum'})
             selected_cus.reset_index(inplace=True)
+            st.subheader('Khách hàng đã được phân nhóm 🎉')
             st.markdown(format_table(selected_cus).to_html(), unsafe_allow_html=True)    
             giai_thich_ClusterName(st,selected_cus['ClusterName'].iloc[0])
 
