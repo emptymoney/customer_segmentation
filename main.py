@@ -20,7 +20,8 @@ gmm_model=pickle.load(open('gmm_model.pkl', 'rb'))
 df_now=fn.gan_nhan_cum_cho_khach_hang(df_now,model)
 rfm_agg2=fn.tinh_gia_tri_tb_RFM(df_now)
 df_merged = pd.merge(df, df_now, left_on='Member_number', right_index=True, how='inner')
-customers=fn.get_list_customers(df)
+# customers=fn.get_list_customers(df)
+customers=fn.get_list_customers(df_merged)
 random_customers = customers.sample(n=3, random_state=40)
 
 # -----------------------------------------------------------------------------------

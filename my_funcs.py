@@ -91,7 +91,7 @@ def select_one_customers_by_RFM(df,model,st):
     monetary_min=float(df['Monetary'].min())
     monetary_max=float(df['Monetary'].max()*2)
 
-    R = st.slider("Recency", 0, recency_max, int((recency_max-recency_min)/6))
+    R = st.slider("Recency", 0, recency_max, int((recency_max-recency_min)/5))
     st.write("Recency: ", R)
 
     F = st.slider("Frequency", 0, frequency_max, int((frequency_max-frequency_min)/6))
