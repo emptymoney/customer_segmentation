@@ -24,25 +24,42 @@ customers=fn.get_list_customers(df)
 random_customers = customers.sample(n=3, random_state=40)
 
 # -----------------------------------------------------------------------------------
-
-menu = ["Giới thiệu", "Yêu cầu của doanh nghiệp","Các thuật toán thử nghiệm", "Lựa chọn kết quả","Tra cứu nhóm khách hàng"]
-
+menu = ["Trang chủ", "Yêu cầu của doanh nghiệp","Các thuật toán thử nghiệm", "Lựa chọn kết quả","Ứng dụng phân cụm"]
 with st.sidebar:
     selected = option_menu("Menu chính", menu, 
         icons=['house', '1-square', '2-square','3-square','4-square'], menu_icon="cast", default_index=0)
     
-if selected == "Giới thiệu":
+if selected == "Trang chủ":
     st.markdown("<h1 style='text-align: center;'>Đồ Án Tốt Nghiệp<br>Data Science & Machine Learning</h1>", unsafe_allow_html=True)    
-    st.markdown("<h2 style='text-align: center;font-weight: bold; color: blue'>Đề tài: Phân nhóm khách hàng</h1>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center;font-weight: bold; color: blue'>Đề tài: Phân nhóm khách hàng</h2>", unsafe_allow_html=True)
     st.image('images/h3_1.png')
 elif selected=="Yêu cầu của doanh nghiệp":
     st.image('images/CuaHang.png')
     st.write("")
-    st.write("#### * Cửa hàng X chủ yếu bán các sản phẩm thiết  yếu cho khách hàng như rau, củ, quả, thịt, cá,  trứng, sữa, nước giải khát... Khách hàng của cửa hàng là khách hàng mua lẻ.")
-    st.write("#### * Chủ cửa hàng X mong muốn có thể bán được nhiều hàng hóa hơn cũng như giới thiệu sản  phẩm đến đúng đối tượng khách hàng, chăm sóc và làm hài lòng khách hàng")
+    st.write(
+        '''
+        ##### Khái quát về cửa hàng:
+        - Cửa hàng X chủ yếu bán các sản phẩm thiết yếu cho khách hàng như rau, củ, quả, thịt, cá, trứng, sữa, nước giải khát...
+        - Khách hàng của cửa hàng là khách hàng mua lẻ.
+        ''')   
+    st.write(
+        '''
+        ##### Mong muốn của cửa hàng:
+        - Chủ cửa hàng X mong muốn có thể bán được nhiều hàng hóa hơn
+        - Giới thiệu sản phẩm đến đúng đối tượng khách hàng, chăm sóc và làm hài lòng khách hàng
+        ''')
+    st.write(
+        '''
+        ##### Yêu cầu đưa ra:
+        - Tìm ra giải pháp giúp cải thiện hiệu quả quảng bá, từ đó giúp tăng doanh thu bán hàng, cải thiện mức độ hài lòng của khách hàng.
+        ''')
+    st.write(
+        '''
+        ##### Mục tiêu/ vấn đề:
+        - Xây dựng hệ thống phân cụm khách hàng dựa trên các thông tin do cửa hàng cung cấp từ đó có thể giúp cửa hàng xác định các nhóm khách hàng khác nhau để có chiến lược kinh doanh, chăm sóc khách hàng phù hợp
+        ''')
 elif selected=="Các thuật toán thử nghiệm":
     tab1, tab2, tab3 = st.tabs(["Tập Luật", "Thuật toán GMM", "Thuật toán KMeans"])
-
     with tab1:
         st.write("### Tập Luật chia làm 5 cụm")
         df_RFM_TapLuat.rename(columns={'RFM_Level': 'Cluster'}, inplace=True)
@@ -52,7 +69,6 @@ elif selected=="Các thuật toán thử nghiệm":
         st.write("**Tính giá trị trung bình RFM cho các cụm**")
         st.markdown(fn.format_table(rfm_agg3).to_html(), unsafe_allow_html=True)
         fn.ve_cac_bieu_do(rfm_agg3,df_RFM_TapLuat,st,'Tập luật')        
-
     with tab2:
         st.write("### GMM chia làm 8 cụm")
         df_RFM['Cluster'] = gmm_model.predict(scaled_data)
@@ -62,66 +78,57 @@ elif selected=="Các thuật toán thử nghiệm":
         st.write("**Tính giá trị trung bình RFM cho các cụm**")
         st.markdown(fn.format_table(rfm_agg).to_html(), unsafe_allow_html=True)
         fn.ve_cac_bieu_do(rfm_agg,df_RFM,st,'GMM')        
-
     with tab3:
         st.write("### KMeans với k=5 ,chia làm 5 cụm")
         st.write("**Tính giá trị trung bình RFM cho các cụm**")
         st.markdown(fn.format_table(rfm_agg2).to_html(), unsafe_allow_html=True)  
         fn.ve_cac_bieu_do(rfm_agg2,df_now,st,'KMeans')
 elif selected=="Lựa chọn kết quả":
-    st.write("")
-    st.write('#### 1. Tính giá trị trung bình RFM cho các cụm')
-    st.markdown(fn.format_table(rfm_agg2.head()).to_html(), unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center;'>Chọn thuật toán KMeans để làm thử nghiệm phân cụm khác hàng</h2>", unsafe_allow_html=True) 
+    st.subheader('Sử dụng k=5 -> Chia thành 5 cụm')   
+    
+    tab1, tab2 = st.tabs(["Biểu đồ", "Top 3 sản phẩm/nhóm sản phẩm"])
+    with tab1:
+        st.write("")
+        st.write('#### 1. Tính giá trị trung bình RFM cho các cụm')
+        st.markdown(fn.format_table(rfm_agg2.head()).to_html(), unsafe_allow_html=True)
 
-    st.write("")
-    st.write('#### 2. Các biểu đồ')
-    fn.ve_cac_bieu_do(rfm_agg2,df_now,st,'KMeans')
+        st.write("")
+        st.write('#### 2. Các biểu đồ')
+        fn.ve_cac_bieu_do(rfm_agg2,df_now,st,'KMeans')
 
-    # Ví dụ sử dụng với top 3 sản phẩm ưa thích
-    behavior_table = df_merged.groupby('ClusterName').apply(lambda group: fn.get_top_products_info(group, df_merged, top_n=3))
-    behavior_table=behavior_table.droplevel(level=1)
-    behavior_table=behavior_table.reset_index()
+        # Ví dụ sử dụng với top 3 sản phẩm ưa thích
+        behavior_table = df_merged.groupby('ClusterName').apply(lambda group: fn.get_top_products_info(group, df_merged, top_n=3))
+        behavior_table=behavior_table.droplevel(level=1)
+        behavior_table=behavior_table.reset_index()
+    with tab2:
+        st.write('#### 3. Top 3 sản phẩm/nhóm sản phẩm ưa thích nhất của mỗi cụm')
+        behavior_table['Top3_Popular_Products'] = behavior_table['Top3_Popular_Products'].apply(lambda x: '<br>'.join(x.split(',')))
+        behavior_table['Top_3_Popular_Category'] = behavior_table['Top_3_Popular_Category'].apply(lambda x: '<br>'.join(x.split(',')))    
+        st.markdown(fn.format_table(behavior_table.head()).to_html(), unsafe_allow_html=True)    
 
-    st.write("")
-    st.write('#### 3. Top 3 sản phẩm/nhóm sản phẩm ưa thích nhất của mỗi cụm')
-    behavior_table['Top3_Popular_Products'] = behavior_table['Top3_Popular_Products'].apply(lambda x: '<br>'.join(x.split(',')))
-    behavior_table['Top_3_Popular_Category'] = behavior_table['Top_3_Popular_Category'].apply(lambda x: '<br>'.join(x.split(',')))    
-    st.markdown(fn.format_table(behavior_table.head()).to_html(), unsafe_allow_html=True)    
-
-    st.write("##### Giải thích ClusterName:")
-    fn.giai_thich_ClusterName(st)
-elif selected=="Tra cứu nhóm khách hàng":
-    st.write('### Dự đoán phân nhóm khách hàng')
-
-    recency_max=int(df_merged['Recency'].max()*1.5)
-    frequency_max=int(df_merged['Frequency'].max()*1.5)
-    monetary_max=int(df_merged['Monetary'].max()*1.5)
-
-    # Thiết lập random_state
-    random.seed(23)  # Sử dụng giá trị 42 làm random_state
-    random_R = random.sample(range(recency_max), 10)
-    random_F = random.sample(range(frequency_max), 10)
-    random_M = random.sample(range(monetary_max), 10)
-
-    cus_random=pd.DataFrame(list(zip(random_R,random_F,random_M)),columns=['Recency','Frequency','Monetary'])
-    cus_random=fn.gan_nhan_cum_cho_khach_hang(cus_random,model,True)
-
-    cus_random['Member_number']=cus_random.index.map(lambda x:f'KH_{x+1}')
-
-    # st.write("")
-    # st.write('**Danh sách 10 khách hàng tạo ngẫu nhiên**')    
-    # st.markdown(fn.format_table(cus_random[['Recency','Frequency','Monetary','Member_number']]).to_html(), unsafe_allow_html=True)
-
-    status = st.radio("**Chọn cách nhập thông tin khách hàng:**", ("Nhập id khách hàng:", "Nhập RFM của khách hàng:"))
+        st.write("##### Giải thích ClusterName:")
+        fn.giai_thich_ClusterName(st)
+elif selected=="Ứng dụng phân cụm":
+    st.write('### Dự đoán phân nhóm khách hàng')      
+    status = st.radio("**Chọn cách nhập thông tin khách hàng:**", ("Nhập id khách hàng:", "Nhập RFM của khách hàng:","Upload file:"))
     st.write(f'**{status}**')
     if status=="Nhập id khách hàng:":
-        selected_cus=fn.select_one_customers_by_id(cus_random,cus_random,True,st)
-    else:
-        fn.select_one_customers_by_RFM(df_merged,model,st)      
-
-
-
-
+        selected_cus=fn.select_one_customers_by_id(customers,df_merged,False,st)
+    elif status=='Nhập RFM của khách hàng:':
+        fn.select_one_customers_by_RFM(df_merged,model,st)     
+    elif status=='Upload file:':
+        st.subheader("File Uploader")
+        file = st.file_uploader("Chọn file", type=["csv", "txt"])
+        if file is not None:
+            cus_random = pd.read_csv(file)
+            cus_random_temp=cus_random.copy()            
+            cus_random_temp = cus_random_temp.drop(columns=['Member_number'])
+            cus_random_temp=fn.gan_nhan_cum_cho_khach_hang(cus_random_temp,model,True)
+            cus_random=cus_random.merge(cus_random_temp,how='left')
+            st.markdown(fn.format_table(cus_random).to_html(), unsafe_allow_html=True)
+        else:
+            st.write("Vui lòng chọn file.")
 
 #-------------------------------------------------------------
 st.sidebar.subheader("📒 Nhóm thực hiện:")

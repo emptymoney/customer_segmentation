@@ -85,11 +85,11 @@ def format_table(df):
 # -----------------------------------------------------------------------------------
 def select_one_customers_by_RFM(df,model,st):
     recency_min=df['Recency'].min()
-    recency_max=int(df['Recency'].max()*1.5)
+    recency_max=int(df['Recency'].max()*2)
     frequency_min=df['Frequency'].min()
-    frequency_max=int(df['Frequency'].max()*1.5)
-    monetary_min=int(df['Monetary'].min()*1.5)
-    monetary_max=int(df['Monetary'].max()*1.5)
+    frequency_max=int(df['Frequency'].max()*2)
+    monetary_min=int(df['Monetary'].min())
+    monetary_max=int(df['Monetary'].max()*2)
 
     R = st.slider("Recency", 0, recency_max, int((recency_max-recency_min)/6))
     st.write("Recency: ", R)
@@ -115,15 +115,16 @@ def select_one_customers_by_id(customer_id_list,df,isRandomCus,st):
         format_func=lambda x: 'Chọn một khách hàng' if x == '' else x,
     )
 
-    selected_cus=pd.DataFrame()
+    # selected_cus=pd.DataFrame()
     if occupation!='':
         st.write("Khách hàng được chọn:", occupation)
         selected_cus=df[df['Member_number']==occupation]
-        if not isRandomCus:
-            selected_cus=selected_cus.groupby(['ClusterName','Recency','Frequency','Monetary']).agg({'TotalPrice':'sum'})
-        selected_cus.reset_index(inplace=True)
-        st.markdown(format_table(selected_cus).to_html(), unsafe_allow_html=True)    
-        giai_thich_ClusterName(st,selected_cus['ClusterName'].iloc[0])
+        if not selected_cus.empty:
+            if not isRandomCus:
+                selected_cus=selected_cus.groupby(['ClusterName','Recency','Frequency','Monetary']).agg({'TotalPrice':'sum'})
+            selected_cus.reset_index(inplace=True)
+            st.markdown(format_table(selected_cus).to_html(), unsafe_allow_html=True)    
+            giai_thich_ClusterName(st,selected_cus['ClusterName'].iloc[0])
 
 
 # -----------------------------------------------------------------------------------
@@ -194,25 +195,51 @@ def giai_thich_ClusterName(st,cluster_name=None):
         st.write(
         ''' 
         **Champions: Khách hàng VIP**
-        - Recency thấp, Frequency và Monetary cao, quy mô lớn (Count cao). 
-        - Đây là nhóm khách hàng có giá trị nhất, mang lại nhiều doanh thu cho doanh nghiệp.
+        - Mô tả:
+            - Recency thấp, Frequency và Monetary cao, quy mô lớn (Count cao). 
+            - Đây là nhóm khách hàng có giá trị nhất, mang lại nhiều doanh thu cho doanh nghiệp.
+        - Đề xuất:            
+            - Ưu tiên hàng đầu: Cung cấp dịch vụ khách hàng đặc biệt, ưu tiên xử lý đơn hàng, hỗ trợ 24/7.
+            - Chương trình VIP độc quyền: Tạo ra các chương trình ưu đãi, quà tặng đặc biệt chỉ dành cho nhóm VIP.
+            - Tăng cường tương tác: Tổ chức sự kiện, chương trình tri ân dành riêng cho khách hàng VIP.  
         
         **Lost Customers: Khách hàng đã mất**
-        - Recency cao, Frequency và Monetary thấp, quy mô lớn (Count cao). 
-        - Nhóm này mua hàng không thường xuyên và chi tiêu ít.
+        - Mô tả:
+            - Recency cao, Frequency và Monetary thấp, quy mô lớn (Count cao). 
+            - Nhóm này mua hàng không thường xuyên và chi tiêu ít.
+        - Đề xuất:            
+            - Khảo sát: Thực hiện khảo sát để hiểu lý do họ ngừng mua hàng.
+            - Khuyến mãi đặc biệt: Gửi email/tin nhắn với ưu đãi đặc biệt, chương trình tri ân.
+            - Cá nhân hóa: Cá nhân hóa nội dung tiếp thị dựa trên lịch sử mua hàng trước đó.    
         
         **New Customers: Khách hàng mới**
-        - Recency, Frequency và Monetary ở mức trung bình, quy mô lớn (Count cao). 
-        - Đây có thể là nhóm khách hàng mới, đang tìm hiểu và thử nghiệm sản phẩm/dịch vụ. Hoặc khách hàng tiềm năng chưa quyết định gắn bó lâu dài.    
+        - Mô tả:
+            - Recency, Frequency và Monetary ở mức trung bình, quy mô lớn (Count cao). 
+            - Đây có thể là nhóm khách hàng mới, đang tìm hiểu và thử nghiệm sản phẩm/dịch vụ. Hoặc khách hàng tiềm năng chưa quyết định gắn bó lâu dài.
+        - Đề xuất:            
+            - Hướng dẫn & hỗ trợ: Cung cấp hướng dẫn sử dụng sản phẩm/dịch vụ, hỗ trợ tận tình để tạo trải nghiệm tích cực.
+            - Khuyến mãi mua hàng lần sau: Gửi mã giảm giá cho lần mua tiếp theo.
+            - Xây dựng lòng trung thành: Thực hiện các chương trình khuyến khích mua hàng thường xuyên.
         
         **Loyal Customers: Khách hàng trung thành**
-        - Recency thấp, Frequency cao nhưng Monetary thấp, quy mô nhỏ (Count thấp). 
-        - Đây là nhóm khách hàng trung thành nhưng chi tiêu ít  
+        - Mô tả:
+            - Recency thấp, Frequency cao nhưng Monetary thấp, quy mô nhỏ (Count thấp). 
+            - Đây là nhóm khách hàng trung thành nhưng chi tiêu ít
+        - Đề xuất:            
+            - Chăm sóc: Duy trì mối quan hệ tốt, gửi lời cảm ơn, quà tặng vào các dịp đặc biệt.
+            - Chương trình khách hàng thân thiết: Xây dựng chương trình tích điểm, ưu đãi dành riêng cho nhóm này.
+            - Tăng giá trị đơn hàng: Khuyến khích mua thêm sản phẩm/dịch vụ bằng cách giới thiệu sản phẩm bổ sung hoặc bán chéo.   
         
         **Potential Customers: Khách hàng tiềm năng**
-        - Recency cao, Frequency thấp nhưng Monetary cao, quy mô nhỏ (Count thấp). 
-        - Đây là nhóm khách hàng đã từng chi tiêu nhiều nhưng đã lâu không mua hàng. 
-        - Họ có tiềm năng trở thành khách hàng trung thành nếu được chăm sóc đúng cách.                          
+        - Mô tả:
+            - Recency cao, Frequency thấp nhưng Monetary cao, quy mô nhỏ (Count thấp). 
+            - Đây là nhóm khách hàng đã từng chi tiêu nhiều nhưng đã lâu không mua hàng. 
+            - Họ có tiềm năng trở thành khách hàng trung thành nếu được chăm sóc đúng cách.  
+        - Đề xuất:
+            - Gửi email marketing giới thiệu sản phẩm mới, chương trình khuyến mãi hấp dẫn.
+            - Thu hút: Chạy các chiến dịch quảng cáo, khuyến mãi hấp dẫn để thu hút sự chú ý và khuyến khích mua hàng lần đầu.
+            - Giới thiệu sản phẩm: Gửi email giới thiệu sản phẩm/dịch vụ mới, phù hợp với sở thích của họ (dựa trên dữ liệu đã có).
+            - Tăng nhận diện: Tăng cường nhận diện thương hiệu thông qua các kênh tiếp thị khác nhau.                           
         ''')
     
 # -----------------------------------------------------------------------------------
@@ -237,15 +264,20 @@ def giai_thich_ClusterName(st,cluster_name=None):
 
 
 # -----------------------------------------------------------------------------------
-def truc_quan_hoa_treemap(rfm_agg2,modelName):    
+def truc_quan_hoa_treemap(rfm_agg,modelName):    
     fig = px.treemap(
-        rfm_agg2,
+        rfm_agg,
         path=['ClusterName'],
         values='Count',
         color='ClusterName',
         hover_data=['RecencyMean', 'FrequencyMean', 'MonetaryMean', 'Percent'],
         title=f"RFM Clustering with {modelName} (tree map)"
     )
+
+    fig.update_traces(textinfo="label+value+percent root", 
+                  texttemplate='%{label}<br>%{customdata[0]} days<br>%{customdata[1]} orders<br>%{customdata[2]:.2f} $<br>%{value} customers (%{customdata[3]:.2f} %)',
+                  customdata=rfm_agg[['RecencyMean', 'FrequencyMean','MonetaryMean','Percent']]
+                  )
     fig.update_layout(margin=dict(t=50, l=25, r=25, b=25))
     return fig
 
